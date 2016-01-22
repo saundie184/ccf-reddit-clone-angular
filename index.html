@@ -22,7 +22,7 @@
 </head>
 
 <body ng-app='redditClone'>
-  <div class="container">
+  <div ng-controller='FormController as FC' class="container">
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -32,68 +32,124 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
-            <!-- <li><a href="#">Submit post</a></li> -->
+            <li>
+            </li>
           </ul>
         </div>
         <!-- /.navbar-collapse -->
       </div>
       <!-- /.container-fluid -->
     </nav>
-    <!-- New post form -->
-    <div ng-controller='FormController as FC'>
-      <form name='newPost'>
-        <!--Title -->
-        <div ng-class='{"has-error": newPost.title.$invalid && newPost.title.$dirty, "has-success": newPost.title.$valid }' class="form-group">
-          <label for="title">Post title:</label>
-          <input ng-model='FC.title' name='title' type="text" class="form-control" id="title" placeholder="enter a title for your post" ng-minlength='3' required />
+    <div>
+      <div class="row">
+        <div class="col-md-6">
+          <div>
+            <label>Sort by:</label>
+            <select ng-model='sort'>
+              <option value='-date'>
+                Date
+              </option>
+              <option  value='-vote'>
+                Votes
+              </option>
+            </select>
+          </div>
+          <div>
+            <h1>The Feed</h1>
+            {{sort}}
+            <div ng-repeat='post in FC.postsArray | orderBy: sort' class='row marg'>
+              <!-- <pre>
+            {{FC.postsArray}}
+              </pre> -->
+              <div class='.col-md-4'>
+                <img src='{{post.image}}' alt="">
+              </div>
+              <div class='.col-md-8'>
+                <div>
+                  <p class='text-warning'>Votes: {{post.vote}}</p>
+                  <button ng-click='post.vote = post.vote + 1' type="button" class="btn btn-success btn-lg">
+                    <span class='glyphicon glyphicon-thumbs-up'></span>
+                  </button>
+                  <button ng-click='post.vote = post.vote - 1' type="button" class="btn btn-danger btn-lg">
+                    <span class='glyphicon glyphicon-thumbs-down'></span>
+                  </button>
 
-          <p ng-show='newPost.title.$dirty && newPost.title.$error.minlength' class='help-block'>
-            Title must be longer.
-          </p>
-          <p ng-show='newPost.title.$dirty && newPost.title.$error.required' class='help-block'>
-            Title cannot be blank.
-          </p>
-        </div>
-        <!--Author -->
-        <div ng-class='{"has-error": newPost.author.$invalid && newPost.author.$dirty, "has-success": newPost.author.$valid }' class="form-group">
-          <label for="author">Author:</label>
-          <input ng-model='FC.author' name='author' type="text" class="form-control" id="author" placeholder="your name goes here" ng-minlength='2' required />
+                  <h2>{{post.title}}</h2>
+                  <span>
+                    <h4>by:</h4>
+                    <h3>{{post.author}}</h3>
+                    </span>
+                  <p>
+                    {{post.postText}}
+                  </p>
+                  <p class='text-primary'>
+                    {{post.date | date: "EEEE, MMMM d, yyyy 'at' h:mma"}}
+                  </p>
 
-          <p ng-show='newPost.author.$dirty && newPost.author.$error.minlength ' class='help-block'>
-            Author must be longer.
-          </p>
-          <p ng-show='newPost.author.$dirty && newPost.author.$error.required' class='help-block'>
-            Author cannot be blank.
-          </p>
-        </div>
-        <!--Post text -->
-        <div ng-class='{"has-error": newPost.postText.$invalid && newPost.postText.$dirty, "has-success": newPost.postText.$valid }' class="form-group">
-          <label for="postText">Post text:</label>
-          <textarea ng-model='FC.postText' name='postText' type="text" class="form-control" id="postText" placeholder="what do you have to say?" ng-minlength='5' ng-maxlength='3000' required ></textarea>
+                </div>
+              </div>
+            </div>
 
-          <p ng-show='newPost.postText.$dirty && newPost.postText.$error.minlength' class='help-block'>
-            Post text must be longer.
-          </p>
-          <p ng-show='newPost.postText.$error.maxlength' class='help-block'>
-            Post text must be less than 500 words.
-          </p>
-          <p ng-show='newPost.postText.$dirty && newPost.postText.$error.required' class='help-block'>
-            Post text cannot be blank.
-          </p>
+          </div>
         </div>
-        <!--Image URL -->
-        <div ng-class='{"has-error": newPost.image.$invalid, "has-success": newPost.image.$valid && newPost.image.$dirty}' class="form-group">
-          <label for="image">Image URL:</label>
-          <input ng-model='FC.image' name='image' type="url" class="form-control" id="image" placeholder="">
-          <p ng-show='newPost.image.$error.url' class='help-block'>
-            Enter a valid url.
-          </p>
+        <div class="col-md-6">
+          <!-- New post form -->
+          <h1>Create a new post</h1>
+          <form name='newPost'>
+            <!--Title -->
+            <div ng-class='{"has-error": newPost.title.$invalid && newPost.title.$dirty, "has-success": newPost.title.$valid }' class="form-group">
+              <label for="title">Post title:</label>
+              <input ng-model='FC.title' name='title' type="text" class="form-control" id="title" placeholder="enter a title for your post" ng-minlength='3' required />
+
+              <p ng-show='newPost.title.$dirty && newPost.title.$error.minlength' class='help-block'>
+                Title must be longer.
+              </p>
+              <p ng-show='newPost.title.$dirty && newPost.title.$error.required' class='help-block'>
+                Title cannot be blank.
+              </p>
+            </div>
+            <!--Author -->
+            <div ng-class='{"has-error": newPost.author.$invalid && newPost.author.$dirty, "has-success": newPost.author.$valid }' class="form-group">
+              <label for="author">Author:</label>
+              <input ng-model='FC.author' name='author' type="text" class="form-control" id="author" placeholder="your name goes here" ng-minlength='2' required />
+
+              <p ng-show='newPost.author.$dirty && newPost.author.$error.minlength ' class='help-block'>
+                Author must be longer.
+              </p>
+              <p ng-show='newPost.author.$dirty && newPost.author.$error.required' class='help-block'>
+                Author cannot be blank.
+              </p>
+            </div>
+            <!--Post text -->
+            <div ng-class='{"has-error": newPost.postText.$invalid && newPost.postText.$dirty, "has-success": newPost.postText.$valid }' class="form-group">
+              <label for="postText">Post text:</label>
+              <textarea ng-model='FC.postText' name='postText' type="text" class="form-control" id="postText" placeholder="what do you have to say?" ng-minlength='5' ng-maxlength='3000' required></textarea>
+
+              <p ng-show='newPost.postText.$dirty && newPost.postText.$error.minlength' class='help-block'>
+                Post text must be longer.
+              </p>
+              <p ng-show='newPost.postText.$error.maxlength' class='help-block'>
+                Post text must be less than 500 words.
+              </p>
+              <p ng-show='newPost.postText.$dirty && newPost.postText.$error.required' class='help-block'>
+                Post text cannot be blank.
+              </p>
+            </div>
+            <!--Image URL -->
+            <div ng-class='{"has-error": newPost.image.$invalid, "has-success": newPost.image.$valid && newPost.image.$dirty}' class="form-group">
+              <label for="image">Image URL:</label>
+              <input ng-model='FC.image' name='image' type="url" class="form-control" id="image" placeholder="">
+              <p ng-show='newPost.image.$error.url' class='help-block'>
+                Enter a valid url.
+              </p>
+            </div>
+            <!--BUTTON -->
+            <button ng-disabled='newPost.$invalid' ng-click='FC.submitPost(); newPost.$setPristine()' type="submit" class="btn btn-success">Submit post</button>
+          </form>
         </div>
-        <!--BUTTON -->
-        <button type="submit" class="btn btn-success" ng-disabled='newPost.$invalid'>Submit post</button>
-      </form>
+      </div>
     </div>
-
+    <!-- ng-controller-->
   </div>
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
